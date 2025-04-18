@@ -2,14 +2,14 @@
 
 @inject ILocalStorageService localStorage
 
-<MudThemeProvider @ref="mudThemeProvider" Theme="@theme" IsDarkMode="isDarkMode" />
+<MudThemeProvider @ref="mudThemeProvider" Theme="@theme" IsDarkMode="IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
+        <MudLink Typo="Typo.h5" Class="ml-3" Href="/" Underline="Underline.None" Color="Color.Default">Application</MudLink>
         <MudSpacer />
         <MudIconButton Icon="@(DarkLightModeButtonIcon)" Color="Color.Inherit" OnClick="DarkModeToggle" />
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
@@ -18,7 +18,9 @@
         <NavMenu />
     </MudDrawer>
     <MudMainContent Class="pt-16 pa-4">
-        @Body
+        <CascadingValue Value="IsDarkMode">
+            @Body
+        </CascadingValue>
     </MudMainContent>
 </MudLayout>
 
@@ -31,7 +33,7 @@
 
 @code {
     private bool drawerOpen = true;
-    private bool isDarkMode;
+    private bool IsDarkMode;
     private MudTheme? theme = null;
     private MudThemeProvider mudThemeProvider = new();
 
@@ -46,7 +48,7 @@
             LayoutProperties = new LayoutProperties()
         };
 
-        isDarkMode = await localStorage.GetItemAsync<bool?>("isDarkMode") 
+        IsDarkMode = await localStorage.GetItemAsync<bool?>("isDarkMode") 
             ?? await mudThemeProvider.GetSystemPreference();
     }
 
@@ -57,8 +59,8 @@
 
     private async Task DarkModeToggle()
     {
-        isDarkMode = !isDarkMode;
-        await localStorage.SetItemAsync("isDarkMode", isDarkMode);
+        IsDarkMode = !IsDarkMode;
+        await localStorage.SetItemAsync("isDarkMode", IsDarkMode);
     }
 
     private readonly PaletteLight _lightPalette = new()
@@ -100,7 +102,7 @@
             OverlayLight = "#1e1e2d80",
         };
 
-    public string DarkLightModeButtonIcon => isDarkMode switch
+    public string DarkLightModeButtonIcon => IsDarkMode switch
     {
         true => Icons.Material.Rounded.AutoMode,
         false => Icons.Material.Outlined.DarkMode,

@@ -1,0 +1,12 @@
+﻿<MudMarkdown Value="@Value" CodeBlockTheme="Theme" />
+
+@code {
+    [CascadingParameter]
+    public bool IsDarkMode { get; set; }
+
+    [Parameter, EditorRequired]
+    public required string Value { get; set; }
+
+    CodeBlockTheme Theme => IsDarkMode ? CodeBlockTheme.Dark : CodeBlockTheme.Default;
+}
+ 

@@ -1,0 +1,45 @@
+﻿@page "/blogs"
+
+@using Qiro.Client.Features.Blogs.Services
+@using Qiro.Client.Features.Blogs.DTOs
+
+@inject BlogService BlogService;
+
+<MudContainer>
+    @if (isLoading)
+    {
+        <div class="d-flex justify-center align-center">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        </div>
+    }
+    else
+    {
+        <MudGrid>
+            @foreach (var blog in blogs)
+            {
+                <MudItem xs="12" md="6">
+                    <BlogOverview Metadata="blog" />
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    bool isLoading;
+    List<BlogMetadataDto> blogs = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+
+            blogs = await BlogService.GetAllBlogsAsync();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

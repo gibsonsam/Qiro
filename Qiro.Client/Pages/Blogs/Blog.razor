@@ -1,0 +1,41 @@
+﻿@page "/blogs/{BlogId:guid}"
+
+@using Qiro.Client.Features.Blogs.Services
+@using Qiro.Client.Features.Blogs.DTOs
+
+@inject BlogService BlogService;
+
+<MudContainer>
+    @if(isLoading)
+    {
+        <div class="d-flex justify-center align-center">
+            <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        </div>
+    }
+    else if (post is not null)
+    {
+        <BlogPost Value="@post.Content" />
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public required Guid BlogId { get; set; }
+
+    bool isLoading;
+    BlogPostDto? post;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            isLoading = true;
+
+            post = await BlogService.GetBlogPostByIdAsync(BlogId);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
